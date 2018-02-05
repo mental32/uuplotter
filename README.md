@@ -18,13 +18,13 @@ plotter = uuplotter.Plotter(data)
 plotter.print()
 
 ```
-
+![usage output](examples/images/usage_example.png)
 ### styles
 uuplotter uses styles to visualise data sets.
 
 current styles avaliable:
 
-- linear right leaning -> 
+- linear right leaning
 <br>![lrl](examples/images/linear_right_leaning.png)
 
 planned styles:
