@@ -15,7 +15,9 @@ data = {
 }
 
 plotter = uuplotter.Plotter(data)
-plotter.print()
+for key in plotter.datapoints:
+	plotter.center(key)
+	plotter.print()
 
 ```
 ![usage output](examples/images/usage_example.png)
