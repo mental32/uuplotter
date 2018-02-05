@@ -27,10 +27,11 @@ uuplotter uses styles to visualise data sets.
 current styles avaliable:
 
 - linear right leaning
-<br>![lrl](examples/images/linear_right_leaning.png)
+<br>![lrl](examples/images/linear_right_leaning.png)<br>
+- linear trail
+<br>![lt](examples/images/linear_trail.png)<br>
 
 planned styles:
 
 - linear left leaning
-- linear trail
 - spider

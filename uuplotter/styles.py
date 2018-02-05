@@ -46,3 +46,34 @@ def linear_right_leaning(datapoint) -> str:
 	connections[0] = '\n'.join(displacement + line for line in connections[0].split('\n'))
 	center.raw_str.append(splice_strings(*connections))
 	return center.string()
+
+def linear_trail(datapoint) -> str:
+	def right_if_middle(nt, nntt) -> str:
+		n, t = nt
+		nn, tt = nntt
+
+		if int(nn) == int(tt) - 1:
+			if int(n) == t // 2:
+				return _bottomleft
+			elif int(n) != t - 1:
+				return _vertical
+			else:
+				return ' '
+		else:
+			if int(n) == t // 2:
+				return _vertical_right
+			else:
+				return _vertical
+
+	center = Box(datapoint.name, datapoint.connections)
+	if center.connections:
+		connections = [Box(conn).modify(left_connector=_vertical_left).string() for conn in center.connections]
+		for n, conn in enumerate(connections.copy()):
+			connections[n] = '\n'.join(' ' * (Box.estimate(datapoint.name) + 1) + right_if_middle((index, len(conn.split('\n'))), (n, len(connections))) + string for index, string in enumerate(conn.split('\n')))
+
+		center.right_connector = _vertical_right
+		center.raw_str[1] += _horizontal + _topright
+		center.raw_str[2] += ' ' + _vertical
+		center.raw_str += connections
+
+	return center.string()
