@@ -19,14 +19,12 @@ def splice_strings(*strings):
 	return '\n'.join(''.join(pair) for pair in zip(*[s.split('\n') for s in strings]))
 
 
-def liner_right_leaning(datapoint) -> str:
+def linear_right_leaning(datapoint) -> str:
 	def make_top(hostname) -> str:
 		est = Box.estimate(hostname)
 		lst = list(_horizontal * (est - 2))
 		lst[len(lst)//2] = _horizontal_up
 		return ''.join(lst)
-
-	# make_top = lambda hostname: ''.join([('╩' if i == ((Box.estimate(hostname)-2)//2) else '═') for i in range(Box.estimate(hostname)-2)])
 
 	center = Box(datapoint.name, datapoint.connections)
 	if center.connections:

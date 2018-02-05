@@ -49,8 +49,8 @@ class Plotter:
 
 		self.target = tuple(self.datapoints)[index]
 
-	def format(self, style='liner_right_leaning'):
+	def format(self, style='linear_right_leaning'):
 		return getattr(styles, style)(Box(self.target, self.datapoints[self.target]))
 
-	def print(self, style='liner_right_leaning'):
+	def print(self, style='linear_right_leaning'):
 		print(self.format(style=style))
