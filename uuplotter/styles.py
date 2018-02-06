@@ -156,6 +156,7 @@ def spider(datapoint) -> str:
 
 		rc = lambda i: (_vertical_left if i in (2, 3) else _vertical)
 		lc = lambda i: (_vertical_right if i in (0, 1) else _vertical)
+		max_q = len(max(center.connections, key=len))
 		for index, branch in enumerate(branches.copy()):
 			for number, connection in enumerate(branch):
 				_element = Box(connection).modify(left_connector=rc(index), right_connector=lc(index))
@@ -172,8 +173,10 @@ def spider(datapoint) -> str:
 					addons = ([add_left(space + '║ ', _element.raw_str[0]), pipe, end] if index == 3 else [end, pipe, add_left(space + '║ ', _element.raw_str[2])])
 				else:
 					end = ('  ' if connection == branch[-1] else ' ║')
-					pipe = (('═╗' if connection == branch[-1] else '═╣') if index in (0, 2) else ('═╝' if connection == branch[-1] else '═╣'))
-					addons = ([end, pipe, ' ║'] if index in (0, 2) else [' ║', pipe, end])
+					sexpand = ' ' * (max_q - len(connection)) 
+					expand = _horizontal * (max_q - len(connection) + 1) 
+					pipe = ((expand+'╗' if connection == branch[-1] else expand+'╣') if index in (0, 2) else (expand+'╝' if connection == branch[-1] else expand+'╣'))
+					addons = ([sexpand + end, pipe, sexpand + ' ║'] if index in (0, 2) else [sexpand + ' ║', pipe, end + sexpand])
 
 				for n, i in enumerate(addons):
 					if index in (2, 3):
