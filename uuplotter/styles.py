@@ -50,8 +50,35 @@ def linear_right_leaning(datapoint) -> str:
 	center.raw_str.append(splice_strings(*connections))
 	return center.string()
 
-def linear_left_leaning(datapoint) -> str:
-	pass
+def linear_left_leaning(center) -> str:
+	def make_line(d, cs):
+		lst = list(_horizontal * d)
+		total = 0
+		for i, c in enumerate(cs):
+			if i == 0:
+				lst[Box.estimate(c) // 2] = _topleft
+			else:
+				lst[total + (Box.estimate(c) // 2)] = _horizontal_down
+			total += Box.estimate(c)
+
+		lst[:lst.index(_topleft)] = ' ' * lst.index(_topleft)
+
+		return ''.join(lst)
+
+	def make_top(hostname) -> str:
+		est = Box.estimate(hostname)
+		lst = list(_horizontal * (est - 2))
+		lst[len(lst)//2] = _horizontal_up
+		return ''.join(lst)
+
+	if center.connections:
+		displacement = sum([Box.estimate(c) for c in center.connections])
+		q = ' ' * displacement
+		center.attach(side='left', seq=[q, make_line(displacement, center.connections), make_line(displacement, center.connections).replace(_horizontal, ' ').replace(_topleft, _vertical).replace(_horizontal_down, _vertical)])
+
+		center.raw_str.append(splice_strings(*(Box(c).modify(top_connector=make_top(c)).string() for c in center.connections)))
+
+	return center.string()
 
 def linear_trail(datapoint) -> str:
 	def right_if_middle(nt, nntt) -> str:

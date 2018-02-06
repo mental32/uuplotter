@@ -32,7 +32,8 @@ current styles avaliable:
 <br>![lt](examples/images/linear_trail.png)<br>
 - spider
 <br>![spider](examples/images/spider.png)<br>
+<br>![lll](examples/images/linear_left_leaning.png)<br>
 
 planned styles:
 
-- linear left leaning
+- star
