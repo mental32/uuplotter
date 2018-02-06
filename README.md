@@ -30,7 +30,7 @@ current styles avaliable:
 <br>![lrl](examples/images/linear_right_leaning.png)<br>
 - linear trail
 <br>![lt](examples/images/linear_trail.png)<br>
-uuplotter/styles.py
+- spider
 <br>![spider](examples/images/spider.png)<br>
 
 planned styles:
