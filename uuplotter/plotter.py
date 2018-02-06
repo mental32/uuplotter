@@ -58,6 +58,12 @@ class Plotter:
 	def __repr__(self):
 		return 'Plotter(datapoints={0})'.format(len(self.datapoints))
 
+	def reinit(self, datapoints):
+		self.datapoints = datapoints
+
+		# select middle datapoint as the target
+		self.target = tuple(datapoints)[len(datapoints) // 2]
+
 	def center(self, key):
 		try:
 			index = tuple(self.datapoints).index(key)

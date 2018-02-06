@@ -71,6 +71,8 @@ def linear_left_leaning(center) -> str:
 		lst[len(lst)//2] = _horizontal_up
 		return ''.join(lst)
 
+	center.modify(left_connector=_vertical_left)
+
 	if center.connections:
 		displacement = sum([Box.estimate(c) for c in center.connections])
 		q = ' ' * displacement
