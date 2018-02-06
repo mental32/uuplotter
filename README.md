@@ -28,11 +28,12 @@ current styles avaliable:
 
 - linear right leaning
 <br>![lrl](examples/images/linear_right_leaning.png)<br>
+- linear left leaning
+<br>![lll](examples/images/linear_left_leaning.png)<br>
 - linear trail
 <br>![lt](examples/images/linear_trail.png)<br>
 - spider
 <br>![spider](examples/images/spider.png)<br>
-<br>![lll](examples/images/linear_left_leaning.png)<br>
 
 planned styles:
 
