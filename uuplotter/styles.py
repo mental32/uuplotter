@@ -1,6 +1,9 @@
 ##
 # -*- coding: utf-8 -*-
 ##
+import itertools
+from collections import deque
+
 from .plotter import Box
 
 _topleft = '╔'
@@ -47,6 +50,9 @@ def linear_right_leaning(datapoint) -> str:
 	center.raw_str.append(splice_strings(*connections))
 	return center.string()
 
+def linear_left_leaning(datapoint) -> str:
+	pass
+
 def linear_trail(datapoint) -> str:
 	def right_if_middle(nt, nntt) -> str:
 		n, t = nt
@@ -75,5 +81,105 @@ def linear_trail(datapoint) -> str:
 		center.raw_str[1] += _horizontal + _topright
 		center.raw_str[2] += ' ' + _vertical
 		center.raw_str += connections
+
+	return center.string()
+
+def spider(datapoint) -> str:
+	def add_left(item, container):
+		return '{0}{1}'.format(item, container)
+
+	def even_array(one, two, appendright=False):
+		four = [one, two]
+		if len(one) != len(two):
+			_three = deque(min((one, two), key=len))
+			_three.appendleft(' ') if not appendright else _three.append(' ')
+			four[four.index(min((one, two), key=len))] = list(_three)
+		return four
+
+	center = Box(datapoint.name, datapoint.connections).modify(left_connector='╣', right_connector='╠')
+	if center.connections:
+		if len(center.connections) < 4:
+			if len(center.connections) <= 2:
+				center.modify(right_connector='║')
+
+			if len(center.connections) == 1:
+				return splice_strings(center.modify(right_connector='╠', left_connector='║').string(), Box(center.connections[0]).modify(left_connector='╣').string())
+
+			base_displacement = max([Box.estimate(n) for n in [c for c in center.connections]])
+
+			center.raw_str[0] = add_left(' ' * base_displacement + ' ║ ', center.raw_str[0])
+			center.raw_str[1] = add_left(' ' * base_displacement + ' ╠═', center.raw_str[1]) + ('═╗' if len(center.connections) == 3 else '')
+			center.raw_str[2] = add_left(' ' * base_displacement + ' ║ ', center.raw_str[2]) + (' ║' if len(center.connections) == 3 else '')
+
+			branches = [[], [], [], []]
+			fixed_indexes = [0, 1, 3]
+			for i, c in enumerate(center.connections):
+				branches[fixed_indexes[i]] = [c]
+		else:
+			base_displacement = max([Box.estimate(n) for n in [c for c in center.connections[::2]]])
+
+			center.raw_str[0] = add_left(' ' * base_displacement + ' ║ ', center.raw_str[0]) + ' ║'
+			center.raw_str[1] = add_left(' ' * base_displacement + ' ╠═', center.raw_str[1]) + '═╣'
+			center.raw_str[2] = add_left(' ' * base_displacement + ' ║ ', center.raw_str[2]) + ' ║'
+
+			l, r = [c for c in center.connections[::2]], [c for c in center.connections[1::2]]
+			branches = [l[:len(l) // 2], l[len(l) // 2:], r[:len(r) // 2], r[len(r) // 2:]]
+
+		center_displacement = Box.estimate(datapoint.name) + 2
+
+		rc = lambda i: (_vertical_left if i in (2, 3) else _vertical)
+		lc = lambda i: (_vertical_right if i in (0, 1) else _vertical)
+		for index, branch in enumerate(branches.copy()):
+			for number, connection in enumerate(branch):
+				_element = Box(connection).modify(left_connector=rc(index), right_connector=lc(index))
+				if index in (2, 3):
+					space = ' ' * center_displacement
+
+					if index == 2:
+						pipe = add_left(space + ('╔═' if connection == branch[-1] else '╠═'), _element.raw_str[1])
+						end = add_left(space + ('  ' if connection == branch[-1] else '║ '), _element.raw_str[0])
+					else:
+						pipe = add_left(space + ('╚═' if connection == branch[-1] else '╠═'), _element.raw_str[1])
+						end = add_left(space + ('  ' if connection == branch[-1] else '║ '), _element.raw_str[2])
+
+					addons = ([add_left(space + '║ ', _element.raw_str[0]), pipe, end] if index == 3 else [end, pipe, add_left(space + '║ ', _element.raw_str[2])])
+				else:
+					end = ('  ' if connection == branch[-1] else ' ║')
+					pipe = (('═╗' if connection == branch[-1] else '═╣') if index in (0, 2) else ('═╝' if connection == branch[-1] else '═╣'))
+					addons = ([end, pipe, ' ║'] if index in (0, 2) else [' ║', pipe, end])
+
+				for n, i in enumerate(addons):
+					if index in (2, 3):
+						_element.raw_str[n] = i
+					else:
+						_element.raw_str[n] += i
+				else:
+					branches[index][number] = _element.string()
+		else:
+			top = []
+			bottom = []
+
+			branches[0], branches[2] = even_array(list(reversed(branches[0])), list(reversed(branches[2])))
+			branches[1], branches[3] = even_array(branches[1], branches[3], appendright=True)
+
+			for left, right in itertools.zip_longest((branches[0]), (branches[2]), fillvalue=' '):
+				if ' ' not in (left, right):
+					top.append(splice_strings(left, right))
+				else:
+					_tmp = [left, right]
+					_tmp[_tmp.index(' ')] = _vertical
+					top.append(_tmp[0])
+
+			for left, right in itertools.zip_longest(branches[1], branches[3], fillvalue=' '):
+				if ' ' not in (left, right):
+					bottom.append(splice_strings(left, right))
+				else:
+					_tmp = [left, right]
+					_tmp.remove(' ')
+					bottom.append(_tmp[0])
+			else:
+				center.raw_str = top + center.raw_str + bottom
+	else:
+		center.modify(left_connector=_vertical, right_connector=_vertical)
 
 	return center.string()
